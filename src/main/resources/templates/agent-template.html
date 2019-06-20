@@ -1,0 +1,73 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="https://cdn.ably.io/lib/ably.min-1.js" type="text/javascript"></script>
+</head>
+<body>
+<h1>Awesome Agent Inbox</h1>
+<div id="panel-anonymous">
+    <h3>Talk to your customer</h3>
+    <form action="/sendMessage">
+        <input type="text" name="message" placeholder="Tell them something">
+        <input type="submit" value="Enter">
+    </form>
+</div>
+
+<div id="agent">
+    <h3>Agent input</h3>
+<!--    <form action="#" th:action="@{/publish}" th:object="${message}" method="post">-->
+<!--        <p>Message: <input type="text" th:field="*{content}" /></p>-->
+<!--        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>-->
+<!--    </form>-->
+
+    <div id="agent-box">
+
+    </div>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th> Title </th>
+        <th> Author </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="chatMessage : ${chatMessages}">
+        <td><span th:text="${chatMessage.content}"> Title </span></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+<script type="text/javascript">
+    /* Set up a Realtime client that authenticates with the local web server auth endpoint */
+    var realtime = new Ably.Realtime({
+        authUrl: '/auth',
+        log: {
+            level: 4
+        }
+    });
+
+    realtime.connection.once('connecting', function() {
+        console.log('Connecting to Ably', 'orange');
+    });
+
+    realtime.connection.once('connected', function() {
+        var user = realtime.auth.tokenDetails.clientId || 'anonymous';
+        var capability = realtime.auth.tokenDetails.capability;
+
+        var channel = realtime.channels.get("site-channel");
+        channel.subscribe(function(msg) {
+            document.getElementById('panel-anonymous').innerText += "Received: " + JSON.stringify(msg.data);
+            alert('Received ' + JSON.stringify(msg.data));
+        });
+
+        // alert(
+        //     'You are now connected to Ably \n' +
+        //     'User: ' + user + ' \n' +
+        //     'Capabilities: ' + capability
+        // );
+    });
+
+</script>
+
+</html>
