@@ -16,11 +16,11 @@ public class AblySubscriberService {
 
     ArrayList<ChatMessage> chatMessages = new ArrayList<>();
 
-//    public ArrayList<ChatMessage> getChatMessages() {
-//        return chatMessages;
-//    }
-//
-//    public AblySubscriberService() throws AblyException {
+    public ArrayList<ChatMessage> getChatMessages() {
+        return chatMessages;
+    }
+
+    public AblySubscriberService() throws AblyException {
 //        Channel channel = ablyRealtime.channels.get("site-channel");
 //        channel.subscribe(new Channel.MessageListener() {
 //            @Override
@@ -31,5 +31,5 @@ public class AblySubscriberService {
 //                chatMessages.add(incomingMessage);
 //            }
 //        });
-//    }
+    }
 }

@@ -12,6 +12,19 @@
     </form>
 </div>
 
+<table>
+    <thead>
+    <tr>
+        <th> Chat Messages </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="chatMessage : ${chatMessages}">
+        <td><span th:text="${chatMessage.content}"> Title </span></td>
+    </tr>
+    </tbody>
+</table>
+
 <!--<div id="agent">-->
 <!--    <h3>Agent input</h3>-->
 <!--        <form action="#" th:action="@{/publish}" th:object="${message}" method="post">-->

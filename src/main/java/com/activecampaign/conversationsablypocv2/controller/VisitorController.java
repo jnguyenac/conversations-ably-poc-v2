@@ -7,6 +7,7 @@ import io.ably.lib.realtime.CompletionListener;
 import io.ably.lib.rest.AblyRest;
 import io.ably.lib.types.AblyException;
 import io.ably.lib.types.ErrorInfo;
+import io.ably.lib.types.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 
 @Controller
 public class VisitorController {
@@ -27,14 +32,19 @@ public class VisitorController {
     @Autowired
     private AblyRealtime ablyRealtime;
 
+    ArrayList<ChatMessage> chatMessages = new ArrayList<>();
+
+
     @GetMapping("/visitor")
     public String greeting(Model model) {
         model.addAttribute("chatMessage", new ChatMessage());
+        model.addAttribute("chatMessages", chatMessages);
+
         return "visitor";
     }
 
     @PostMapping("/sendMessage")
-    public String sendMessage(@ModelAttribute ChatMessage chatMessage) throws AblyException {
+    public ModelAndView sendMessage(@ModelAttribute ChatMessage chatMessage) throws AblyException {
         // TODO: put message in channel
         System.out.println("Please send the message = " + chatMessage.getContent());
         RestTemplate restTemplate = new RestTemplate();
@@ -65,6 +75,24 @@ public class VisitorController {
                         + reason.message);
             }
         });
-        return "visitor";
+
+//        response.sendRedirect("some-url");
+        return new ModelAndView("redirect:/visitor");
+
+    }
+
+    @PostConstruct
+    public void initialize() throws AblyException {
+        //do your stuff
+        Channel channel = ablyRealtime.channels.get("site-channel");
+        channel.subscribe(new Channel.MessageListener() {
+            @Override
+            public void onMessage(Message messages) {
+                System.out.println("Message received: " + messages.data);
+                ChatMessage incomingMessage = new ChatMessage();
+                incomingMessage.setContent(messages.data.toString());
+                chatMessages.add(incomingMessage);
+            }
+        });
     }
 }

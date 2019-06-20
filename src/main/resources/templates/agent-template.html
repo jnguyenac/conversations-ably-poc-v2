@@ -3,12 +3,12 @@
     <script src="https://cdn.ably.io/lib/ably.min-1.js" type="text/javascript"></script>
 </head>
 <body>
-<h1>Awesome Agent Inbox</h1>
+<h1>Agent Inbox</h1>
 <div id="panel-anonymous">
-    <h3>Talk to your customer</h3>
-    <form action="/sendMessage">
-        <input type="text" name="message" placeholder="Tell them something">
-        <input type="submit" value="Enter">
+    <h3>Chat with us!</h3>
+    <form action="#" th:action="@{/sendAgentMessage}" th:object="${chatMessage}" method="post">
+        <input type="text" th:field="*{content}" placeholder="Any questions? Ask us!">
+        <input type="submit" value="Send!">
     </form>
 </div>
 
@@ -27,8 +27,7 @@
 <table>
     <thead>
     <tr>
-        <th> Title </th>
-        <th> Author </th>
+        <th> Agent Inbox </th>
     </tr>
     </thead>
     <tbody>
